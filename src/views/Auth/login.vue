@@ -6,16 +6,19 @@
                     <div class="header">
                         <h3>Login</h3>
                     </div>
-                    <form class="ui form">
+                    <form class="ui form" @submit.prevent="login()">
                         <div class="field">
                             <label style="text-align: left;" for="">E-mail</label>
                             <input v-model="email" type="text" placeholder="Enter E-mail">
                         </div>
                         <div class="field">
                             <label style="text-align: left;" for="">Password</label>
-                            <input v-model="password" type="password" placeholder="Enter Password">
+                            <div class="ui icon input">
+                                <input v-model="password" :type="toggleShowPass?'text':'password'" placeholder="Enter Password">
+                                <i class="eye link icon" :class="toggleShowPass?'':'slash'" @click.stop="toggleShowPass=!toggleShowPass"></i>
+                            </div>
                         </div>
-                        <button class="ui floating blue button" type="button" @click="login()">Login</button>
+                        <button class="ui blue button" :class="button" type="submit">Login</button>
                     </form>
                     <br>
                     <p>{{err}}</p>
@@ -30,36 +33,32 @@ import firebase from 'firebase/app'
 export default {
     data(){
         return {
+            toggleShowPass: false,
             email: '',
             password: '',
-            err: ''
+            err: '',
+            button: ''
         }
     },
     methods:{
         login(){
             var $this = this
+            this.button = 'loading disabled'
             firebase
             .auth()
             .signInWithEmailAndPassword(this.email,this.password)
             .then(function(){
                 var users = firebase.auth().currentUser.uid
-                localStorage.setItem("BEEPTS-admin-id",users)
+                localStorage.setItem("BEEPTS-UserToken",users)
                 $this.$router.push('/about')
+                $this.$store.state.isAuthenticated = true
             })
             .catch(function(error) {
                 $this.err = error.message
+                $this.button = ''
             });
         },
-        checkAuthLogged(){
-            var user = localStorage.getItem("BEEPT-admin-id")
-            if(user !== null){
-                this.$router.push('/about')
-            }
-        }
     },
-    mounted(){
-        // this.checkAuthLogged()
-    }
 }
 </script>
 
