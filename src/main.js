@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import 'firebase/auth'
 import jQuery from 'jquery'
 
 window.jQuery = jQuery;
@@ -17,7 +18,6 @@ firebase.initializeApp({
   databaseURL: "https://kredomerchandise.firebaseio.com",
 });
 Vue.prototype.$db = firebase.firestore()
-
 
 Vue.config.productionTip = false
 

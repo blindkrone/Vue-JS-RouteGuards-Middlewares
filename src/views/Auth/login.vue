@@ -9,14 +9,16 @@
                     <form class="ui form">
                         <div class="field">
                             <label style="text-align: left;" for="">E-mail</label>
-                            <input type="text" placeholder="Enter E-mail">
+                            <input v-model="email" type="text" placeholder="Enter E-mail">
                         </div>
                         <div class="field">
                             <label style="text-align: left;" for="">Password</label>
-                            <input type="text" placeholder="Enter Password">
+                            <input v-model="password" type="password" placeholder="Enter Password">
                         </div>
-                        <div class="ui floating blue button">Login</div>
+                        <button class="ui floating blue button" type="button" @click="login()">Login</button>
                     </form>
+                    <br>
+                    <p>{{err}}</p>
                 </div>
             </div>
         </div>
@@ -24,8 +26,40 @@
 </template>
 
 <script>
+import firebase from 'firebase/app'
 export default {
-    
+    data(){
+        return {
+            email: '',
+            password: '',
+            err: ''
+        }
+    },
+    methods:{
+        login(){
+            var $this = this
+            firebase
+            .auth()
+            .signInWithEmailAndPassword(this.email,this.password)
+            .then(function(){
+                var users = firebase.auth().currentUser.uid
+                localStorage.setItem("BEEPTS-admin-id",users)
+                $this.$router.push('/about')
+            })
+            .catch(function(error) {
+                $this.err = error.message
+            });
+        },
+        checkAuthLogged(){
+            var user = localStorage.getItem("BEEPT-admin-id")
+            if(user !== null){
+                this.$router.push('/about')
+            }
+        }
+    },
+    mounted(){
+        // this.checkAuthLogged()
+    }
 }
 </script>
 
